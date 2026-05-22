@@ -40,6 +40,16 @@ local savedDBDefaults = {
 
 -- Called once the player has loaded WOW.
 function TSM:OnInitialize()
+	-- CROSS-FACTION PATCH: Hard-link Horde to Alliance in the raw database
+	local realm = GetRealmName()
+	local a_key = "Alliance - " .. realm
+	local h_key = "Horde - " .. realm
+	
+	if TradeSkillMaster_AuctionDBDB and TradeSkillMaster_AuctionDBDB.factionrealm and TradeSkillMaster_AuctionDBDB.factionrealm[a_key] then
+		-- Force the Horde key to point to the exact same table memory address as Alliance
+		TradeSkillMaster_AuctionDBDB.factionrealm[h_key] = TradeSkillMaster_AuctionDBDB.factionrealm[a_key]
+	end
+
 	-- load the savedDB into TSM.db
 	TSM.db = LibStub:GetLibrary("AceDB-3.0"):New("TradeSkillMaster_AuctionDBDB", savedDBDefaults, true)
 

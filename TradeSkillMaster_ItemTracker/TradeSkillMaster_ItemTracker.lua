@@ -56,6 +56,16 @@ function TSM:OnInitialize()
 		TSM[moduleName] = module
 	end
 
+	-- CROSS-FACTION PATCH: Hard-link Horde to Alliance in the raw database
+	local realm = GetRealmName()
+	local a_key = "Alliance - " .. realm
+	local h_key = "Horde - " .. realm
+	
+	if TradeSkillMaster_ItemTrackerDB and TradeSkillMaster_ItemTrackerDB.factionrealm and TradeSkillMaster_ItemTrackerDB.factionrealm[a_key] then
+		-- Force the Horde key to point to the exact same table memory address as Alliance
+		TradeSkillMaster_ItemTrackerDB.factionrealm[h_key] = TradeSkillMaster_ItemTrackerDB.factionrealm[a_key]
+	end
+	
 	-- load the saved variables table into TSM.db
 	TSM.db = LibStub:GetLibrary("AceDB-3.0"):New("TradeSkillMaster_ItemTrackerDB", savedDBDefaults, true)
 	TSM.characters = TSM.db.factionrealm.characters
